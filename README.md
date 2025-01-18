@@ -40,16 +40,13 @@ This project is a web-based application that allows users to draw handwritten di
    pip install -r requirements.txt
    ```
 
-4. **Add the Pre-trained Model**:
-   - Place your `.keras` file in the project directory.
-   - Update the path in the Flask app (`app.py`) if necessary.
 
-5. **Run the Flask App**:
+4. **Run the Flask App**:
    ```bash
    python app.py
    ```
 
-6. **Open in Browser**:
+5. **Open in Browser**:
    - Navigate to `http://127.0.0.1:5000`.
 
 ---
