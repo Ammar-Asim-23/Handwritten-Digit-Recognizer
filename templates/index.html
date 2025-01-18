@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Digit Recognizer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+  <style>
+    /* General styles */
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      text-align: center;
+    }
+
+    h1 {
+      font-family: 'Pacifico', cursive;
+      font-size: 2.5em;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    canvas {
+      border: 2px solid #333;
+      cursor: crosshair;
+      background-color: black;
+    }
+
+    #controls {
+      margin-top: 20px;
+    }
+
+    button {
+      background: #2196f3;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 5px;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: #1976d2;
+    }
+
+    button:active {
+      transform: scale(0.95);
+    }
+
+    #result {
+      font-size: 1.5em;
+      margin-top: 20px;
+      color: #333;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2em;
+      }
+
+      canvas {
+        width: 90%;
+        height: auto;
+      }
+
+      button {
+        font-size: 14px;
+        padding: 8px 15px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1.8em;
+      }
+
+      button {
+        font-size: 12px;
+        padding: 6px 10px;
+      }
+
+      #result {
+        font-size: 1.2em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Handwritten Digit Recognizer</h1>
+  <canvas id="canvas" width="280" height="280"></canvas>
+  <div id="controls">
+    <button id="clear">Clear</button>
+    <button id="predict">Predict</button>
+  </div>
+  <div id="result"></div>
+
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const clearButton = document.getElementById('clear');
+    const predictButton = document.getElementById('predict');
+    const resultDiv = document.getElementById('result');
+
+    // Set initial canvas state
+    ctx.fillStyle = 'black'; // Background color
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.lineWidth = 15;
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = 'white'; // Drawing color (inverted to white)
+
+    let isDrawing = false;
+
+    canvas.addEventListener('mousedown', () => {
+      isDrawing = true;
+      ctx.beginPath(); // Start a new path on mouse down
+    });
+    canvas.addEventListener('mouseup', () => {
+      isDrawing = false;
+      ctx.beginPath(); // Reset the path to avoid connecting lines
+    });
+    canvas.addEventListener('mouseout', () => {
+      isDrawing = false;
+      ctx.beginPath(); // Reset the path when the mouse leaves the canvas
+    });
+    canvas.addEventListener('mousemove', draw);
+
+    function draw(event) {
+      if (!isDrawing) return;
+      const rect = canvas.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+      ctx.lineTo(x, y);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+    }
+
+    clearButton.addEventListener('click', () => {
+      ctx.fillStyle = 'black'; // Reset background color
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.beginPath();
+      resultDiv.textContent = '';
+    });
+
+    predictButton.addEventListener('click', async () => {
+      const image = canvas.toDataURL('image/png');
+      const base64Image = image.split(',')[1];
+
+      const response = await fetch('/predict', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ image: base64Image }),
+      });
+
+      const result = await response.json();
+      resultDiv.textContent = `Predicted Digit: ${result.digit}`;
+    });
+  </script>
+</body>
+</html>
