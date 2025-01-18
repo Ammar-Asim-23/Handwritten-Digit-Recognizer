@@ -25,7 +25,7 @@ This project is a web-based application that allows users to draw handwritten di
 
 1. **Clone the Repository**:
    ```bash
-   git clone https://github.com/your-repo/handwritten-digit-recognizer.git
+   git clone https://github.com/Ammar-Asim-23/Handwritten-Digit-Recognizer.git
    cd handwritten-digit-recognizer
    ```
 
