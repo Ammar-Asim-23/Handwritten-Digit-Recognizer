@@ -90,7 +90,7 @@ project/
 
 ### Main Interface
 
-![Main Interface](https://via.placeholder.com/600x400?text=Screenshot+Coming+Soon)
+![Main Interface](interface.png)
 
 ---
 
